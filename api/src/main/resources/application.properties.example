@@ -1,0 +1,2 @@
+spring.application.name=apiVoliMed
+spring.datasource.url=jdc:mysql://localhost//vollmed_api
