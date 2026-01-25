@@ -35,4 +35,19 @@ public class Medico {
         this.especialidade = dadosMed.especialidade();
         this.endereco = new Endereco(dadosMed.endereco());
     }
+
+    public void atualizarDados(DadosAtualizaMedico dadosMed) {
+
+        if (dadosMed.nome() != null) {
+        this.nome = dadosMed.nome();
+        }
+
+        if (dadosMed.telefone() != null) {
+            this.telefone = dadosMed.telefone();
+        }
+
+        if (dadosMed.endereco() != null) {
+            this.endereco.atualizaDados(dadosMed.endereco());
+        }
+    }
 }
