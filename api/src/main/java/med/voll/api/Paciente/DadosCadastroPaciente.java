@@ -18,7 +18,7 @@ public record DadosCadastroPaciente(
         String telefone,
 
         @NotBlank
-//        @CPF // Desativado para testes pois bloqueou CPF inválido :D
+        @CPF
         String cpf,
 
         @NotNull @Valid
