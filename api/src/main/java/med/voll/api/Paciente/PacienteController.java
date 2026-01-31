@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class PacienteController {
     }
 
     @GetMapping
-    Page<DadosListarPaciente> listarPaciente(Pageable paginacao) {
+    Page<DadosListarPaciente> listarPaciente(@PageableDefault(size = 5, sort = "nome") Pageable paginacao) {
         return pacienteRepository.findAll(paginacao).map(DadosListarPaciente::new);
 
     }
