@@ -1,0 +1,1 @@
+alter table medicos ADD ativo TINYINT NOT NULL DEFAULT 1;
