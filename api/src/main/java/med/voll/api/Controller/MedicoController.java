@@ -27,10 +27,16 @@ public class MedicoController {
         return medicoRepository.findAll(paginacao).map(DadosListarMedico::new);
     }
 
-    @Transactional
     @PutMapping
+    @Transactional
     public void atualizarMedico(@RequestBody DadosAtualizaMedico dadosMed){
         var medico = medicoRepository.getReferenceById(dadosMed.id());
         medico.atualizarDados(dadosMed);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void excluirMedico(@PathVariable Long id){
+        medicoRepository.deleteById(id);
     }
 }
