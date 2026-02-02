@@ -18,7 +18,7 @@ public record DadosCadastroPaciente(
         String telefone,
 
         @NotBlank
-        @CPF
+//        @CPF
         String cpf,
 
         @NotNull @Valid
