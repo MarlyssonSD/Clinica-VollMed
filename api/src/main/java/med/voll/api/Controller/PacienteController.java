@@ -23,21 +23,21 @@ public class PacienteController {
     }
 
     @GetMapping
-    Page<DadosListarPaciente> listarPaciente(@PageableDefault(size = 5, sort = "nome") Pageable paginacao) {
+    Page<DadosListarPaciente> listar(@PageableDefault(size = 5, sort = "nome") Pageable paginacao) {
         return pacienteRepository.findAll(paginacao).map(DadosListarPaciente::new);
 
     }
 
     @PutMapping
     @Transactional
-    public void atualizarPaciente(@RequestBody DadosAtualizaPaciente dadosPaciente){
+    public void atualizar(@RequestBody DadosAtualizaPaciente dadosPaciente){
         var paciente = pacienteRepository.getReferenceById(dadosPaciente.id());
         paciente.atualizarDados(dadosPaciente);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void deletarPaciente(@PathVariable Long id){
+    public void excluir(@PathVariable Long id){
         pacienteRepository.deleteById(id);
     }
 }

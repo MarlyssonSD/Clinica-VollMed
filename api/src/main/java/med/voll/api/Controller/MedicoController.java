@@ -18,25 +18,25 @@ public class MedicoController {
 
     @PostMapping
     @Transactional
-    public void cadastrarMedico(@RequestBody @Valid DadosCadastroMedico dadosMed){
+    public void cadastrar(@RequestBody @Valid DadosCadastroMedico dadosMed){
         medicoRepository.save(new Medico(dadosMed));
     }
 
     @GetMapping
-    public Page<DadosListarMedico> listarMedico(@PageableDefault(size = 5, sort = "nome") Pageable paginacao){
+    public Page<DadosListarMedico> listar(@PageableDefault(size = 5, sort = "nome") Pageable paginacao){
         return medicoRepository.findAllByAtivoTrue(paginacao).map(DadosListarMedico::new);
     }
 
     @PutMapping
     @Transactional
-    public void atualizarMedico(@RequestBody DadosAtualizaMedico dadosMed){
+    public void atualizar(@RequestBody DadosAtualizaMedico dadosMed){
         var medico = medicoRepository.getReferenceById(dadosMed.id());
         medico.atualizarDados(dadosMed);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void excluirMedico(@PathVariable Long id){
+    public void desativar(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
         medico.desativaMedico();
     }
