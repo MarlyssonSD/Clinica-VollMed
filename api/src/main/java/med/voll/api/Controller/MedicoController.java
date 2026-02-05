@@ -20,7 +20,7 @@ public class MedicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dadosMed, UriComponentsBuilder uriBuilder ){
+    public ResponseEntity<dadosDetalhamentoMedico> cadastrar(@RequestBody @Valid DadosCadastroMedico dadosMed, UriComponentsBuilder uriBuilder ){
         var medico = new Medico(dadosMed);
         medicoRepository.save(medico);
         var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
@@ -37,7 +37,7 @@ public class MedicoController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizar(@RequestBody DadosAtualizaMedico dadosMed){
+    public ResponseEntity<dadosDetalhamentoMedico> atualizar(@RequestBody DadosAtualizaMedico dadosMed){
         var medico = medicoRepository.getReferenceById(dadosMed.id());
         medico.atualizarDados(dadosMed);
 
@@ -46,7 +46,7 @@ public class MedicoController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity desativar(@PathVariable Long id){
+    public ResponseEntity<Void> desativar(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
         medico.desativaMedico();
 
