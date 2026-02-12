@@ -20,12 +20,12 @@ public class MedicoController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<dadosDetalhamentoMedico> cadastrar(@RequestBody @Valid DadosCadastroMedico dadosMed, UriComponentsBuilder uriBuilder ){
+    public ResponseEntity<DadosDetalhamentoMedico> cadastrar(@RequestBody @Valid DadosCadastroMedico dadosMed, UriComponentsBuilder uriBuilder ){
         var medico = new Medico(dadosMed);
         medicoRepository.save(medico);
         var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(new dadosDetalhamentoMedico(medico));
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
     }
 
     @GetMapping
@@ -36,19 +36,19 @@ public class MedicoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<dadosDetalhamentoMedico> detalhar(@PathVariable Long id){
+    public ResponseEntity<DadosDetalhamentoMedico> detalhar(@PathVariable Long id){
         var medico = medicoRepository.getReferenceById(id);
 
-        return ResponseEntity.ok(new dadosDetalhamentoMedico(medico));
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<dadosDetalhamentoMedico> atualizar(@RequestBody DadosAtualizaMedico dadosMed){
+    public ResponseEntity<DadosDetalhamentoMedico> atualizar(@RequestBody DadosAtualizaMedico dadosMed){
         var medico = medicoRepository.getReferenceById(dadosMed.id());
         medico.atualizarDados(dadosMed);
 
-        return ResponseEntity.ok(new dadosDetalhamentoMedico(medico));
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
     @DeleteMapping("/{id}")
