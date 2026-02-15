@@ -2,7 +2,6 @@ package med.voll.api.Controller;
 
 import jakarta.validation.Valid;
 import med.voll.api.domain.Usuario.DadosAutenticacao;
-import med.voll.api.domain.Usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
