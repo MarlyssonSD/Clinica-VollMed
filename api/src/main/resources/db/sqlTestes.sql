@@ -1,5 +1,6 @@
 select * from medicos;
 select * from pacientes;
+select * from usuario
 
 -- visualiza migrations realizadas
 select * from flyway_schema_history;
