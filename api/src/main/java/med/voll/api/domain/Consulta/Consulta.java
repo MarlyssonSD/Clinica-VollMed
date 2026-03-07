@@ -9,6 +9,7 @@ import med.voll.api.domain.Medico.Medico;
 import med.voll.api.domain.Paciente.Paciente;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table(name = "consultas")
 @Entity(name = "Consulta")
@@ -29,5 +30,5 @@ public class Consulta {
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
-    private LocalDate data;
+    private LocalDateTime data;
 }
