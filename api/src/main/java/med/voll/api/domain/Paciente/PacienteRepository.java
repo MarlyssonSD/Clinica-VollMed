@@ -1,8 +1,16 @@
 package med.voll.api.domain.Paciente;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
+
+    @Query("""
+            SELECT p.ativo from pacientes p
+            WHERE p.id = :id
+            """)
+    Boolean findAtivoById(Long idPaciente);
 }
