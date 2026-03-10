@@ -3,7 +3,6 @@ package med.voll.api.domain.Consulta.Validacoes;
 import med.voll.api.domain.Consulta.DadosAgendamentosConsulta;
 import med.voll.api.domain.ValidacaoException;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;

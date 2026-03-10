@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 
     @Query("""
-            SELECT p.ativo from pacientes p
+            SELECT p.ativo from Paciente p
             WHERE p.id = :id
             """)
     Boolean findAtivoById(Long idPaciente);

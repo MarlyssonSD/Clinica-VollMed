@@ -29,6 +29,8 @@ public class Paciente {
     @Embedded
     Endereco endereco;
 
+    private Boolean ativo;
+
     public Paciente(DadosCadastroPaciente paciente) {
         this.nome = paciente.nome();
         this.email = paciente.email();
