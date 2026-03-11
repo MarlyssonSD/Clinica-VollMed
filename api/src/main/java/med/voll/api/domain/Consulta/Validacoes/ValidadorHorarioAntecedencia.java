@@ -5,14 +5,14 @@ import med.voll.api.domain.ValidacaoException;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 public class ValidadorHorarioAntecedencia implements ValidadorAgendamentoDeConsulta {
 
     public void validar(DadosAgendamentosConsulta dados) {
         var dataConsulta = dados.data();
-        var agora = LocalDate.now();
+        var agora = LocalDateTime.now();
         var diferencaEmMinutos = Duration.between(agora, dataConsulta).toMinutes();
 
         if (diferencaEmMinutos < 30) {

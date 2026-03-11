@@ -21,13 +21,13 @@ public class Paciente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    String nome;
-    String email;
-    String telefone;
-    String cpf;
+    private String nome;
+    private String email;
+    private String telefone;
+    private String cpf;
 
     @Embedded
-    Endereco endereco;
+    private Endereco endereco;
 
     private Boolean ativo;
 
