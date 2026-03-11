@@ -1,7 +1,9 @@
 select * from medicos;
 select * from pacientes;
 select * from usuarios;
+select * from consultas;
 .
+pacientespacientes
 
 -- visualiza migrations realizadas
 select * from flyway_schema_history;
@@ -18,9 +20,13 @@ SET med.ativo = 1
 WHERE med.ativo = 0;
 
 UPDATE medicos med
-SET med.ativo = 1
-WHERE med.nome = 'marlay'
+SET med.ativo = 0
+WHERE med.nome = 'Um Medico Joao'
 
+-- ativa pacientes
+UPDATE pacientes
+SET pacientes.ativo = 1
+WHERE pacientes.nome = 'Fulano'
 
 insert into usuarios values(1,'marly1','$2a$12$kt0B5/cEWPiz6iPzOjfpru8xoYifEsEH0ccL1l52.KhBsqnFhARKu');
 
