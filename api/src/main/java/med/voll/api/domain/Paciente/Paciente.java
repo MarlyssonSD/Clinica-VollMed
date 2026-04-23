@@ -31,12 +31,14 @@ public class Paciente {
 
     private Boolean ativo;
 
+
     public Paciente(DadosCadastroPaciente paciente) {
         this.nome = paciente.nome();
         this.email = paciente.email();
         this.telefone = paciente.telefone();
         this.cpf = paciente.cpf();
-        this.endereco = paciente.endereco();
+        this.endereco = new Endereco(paciente.endereco());
+        this.ativo = true;
     }
 
     public void atualizarDados(DadosAtualizaPaciente dadosPaciente){
