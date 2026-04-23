@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import med.voll.api.domain.Endereco.DadosEndereco;
 import med.voll.api.domain.Endereco.Endereco;
 
 public record DadosCadastroPaciente(
@@ -25,6 +26,6 @@ public record DadosCadastroPaciente(
 
         @NotNull(message = "Dados do endereço são obrigatórios")
         @Valid
-        Endereco endereco
+        DadosEndereco endereco
 ) {
 }

@@ -1,7 +1,5 @@
 package med.voll.api.domain.Medico;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +21,7 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
                             order by rand()
                             limit 1
             """)
-    Medico escolherMedicoAleatorioNaData(Especialidade especialidade, LocalDateTime data);
+    Medico escolherMedicoAleatorioLivreNaData(Especialidade especialidade, LocalDateTime data);
 
     @Query("""
             SELECT m.ativo FROM Medico m
