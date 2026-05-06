@@ -1,10 +1,10 @@
 # 🏥 Clínica VollMed API
 
-API REST desenvolvida em Spring Boot para gerenciamento de uma clínica médica. O sistema permite o cadastro, listagem, atualização e exclusão de médicos e pacientes, incluindo suas especialidades e endereços.
+API REST completa desenvolvida em Spring Boot para gerenciamento de uma clínica médica. O sistema permite o cadastro, listagem, atualização e exclusão de médicos e pacientes, além do agendamento de consultas com autenticação JWT.
 
 ## 📋 Sobre o Projeto
 
-A API VollMed é um sistema completo de gerenciamento de clínica médica que oferece funcionalidades de CRUD (Create, Read, Update, Delete) para médicos e pacientes. O projeto implementa as melhores práticas de desenvolvimento com Spring Boot, incluindo validação de dados, paginação, desativação lógica de registros, e persistência com JPA/Hibernate.
+A API VollMed é um sistema de gerenciamento de clínica médica que oferece funcionalidades completas de CRUD para médicos, pacientes e consultas. Inclui autenticação JWT, validações complexas de agendamento, paginação e persistência com JPA/Hibernate. O projeto implementa as melhores práticas de desenvolvimento com Spring Boot.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -12,27 +12,51 @@ A API VollMed é um sistema completo de gerenciamento de clínica médica que of
 - **Spring Boot 3.5.7**
 - **Spring Data JPA** - Para persistência de dados
 - **Spring Validation** - Para validação de dados
-- **Flyway** - Para controle de versão do banco de dados
+- **Spring Security** - Autenticação e autorização
+- **JWT (Auth0)** - Tokens de autenticação
+- **Flyway** - Controle de versão do banco de dados
 - **MySQL** - Banco de dados relacional
-- **Lombok** - Para redução de código boilerplate
+- **Lombok** - Redução de código boilerplate
 - **Maven** - Gerenciamento de dependências
-- **Hibernate Validator** - Para validação de CPF e email
+- **SpringDoc OpenAPI** - Documentação da API (Swagger)
+- **Hibernate Validator** - Validação avançada de dados
 
 ## 📦 Funcionalidades
 
-### Médicos
+### 🩺 Médicos
 - ✅ Cadastro de médicos com validação de dados
 - ✅ Listagem paginada de médicos ativos
 - ✅ Atualização de dados de médicos
 - ✅ Exclusão lógica de médicos (desativação)
 - ✅ Especialidades: Ortopedia, Cardiologia, Ginecologia, Dermatologia
 - ✅ Campo de status (ativo/inativo)
+- ✅ Escolha aleatória de médico por especialidade
 
-### Pacientes
+### 👥 Pacientes
 - ✅ Cadastro de pacientes com validação de CPF
 - ✅ Listagem paginada de pacientes
 - ✅ Atualização de dados de pacientes
 - ✅ Exclusão física de pacientes
+- ✅ Detalhamento de pacientes
+
+### 📅 Consultas
+- ✅ Agendamento de consultas
+- ✅ Validações complexas de agendamento:
+  - Médico ativo no período
+  - Paciente ativo
+  - Sem outras consultas no mesmo horário
+  - Horários dentro do funcionamento da clínica (8h-18h)
+  - Agendamento com mínimo de 30 minutos de antecedência
+  - Paciente sem outra consulta no mesmo dia
+- ✅ Escolha automática de médico por especialidade
+- ✅ Detalhamento de consultas agendadas
+
+### 🔐 Autenticação e Segurança
+- ✅ Login de usuários
+- ✅ Geração de tokens JWT
+- ✅ Proteção de endpoints com Bearer Token
+- ✅ Tokens com expiração configurável
+- ✅ Validação de segurança em todas as rotas protegidas
 
 ### Validações Implementadas
 **Médicos:**
@@ -47,6 +71,11 @@ A API VollMed é um sistema completo de gerenciamento de clínica médica que of
 - Validação de formato de email
 - Validação de CPF (formato brasileiro)
 - Validação de endereço completo
+
+**Consultas:**
+- Data no futuro obrigatória
+- Paciente ID obrigatório
+- Validações de negócio (ativas, disponibilidade, horários)
 
 ## 🗄️ Estrutura do Banco de Dados
 
@@ -82,6 +111,21 @@ A API VollMed é um sistema completo de gerenciamento de clínica médica que of
 - numero (varchar(20))
 - uf (char(2))
 - cidade (varchar(100))
+```
+
+### Tabela: usuarios
+```sql
+- id (bigint, primary key, auto_increment)
+- login (varchar(100))
+- senha (varchar(255))
+```
+
+### Tabela: consultas
+```sql
+- id (bigint, primary key, auto_increment)
+- medico_id (bigint, foreign key)
+- paciente_id (bigint, foreign key)
+- data (datetime)
 ```
 
 ## 🔧 Configuração e Instalação
@@ -122,6 +166,9 @@ spring.datasource.password=sua_senha
 
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
+
+# Segurança JWT
+api.security.token.secret=sua_chave_secreta_super_segura_aqui_com_minimo_32_caracteres
 ```
 
 4. **Execute o projeto**
@@ -136,7 +183,37 @@ mvnw.cmd spring-boot:run
 
 A API estará disponível em: `http://localhost:8080`
 
+Acesse a documentação Swagger em: `http://localhost:8080/swagger-ui.html`
+
+## 🔐 Autenticação
+
+A API utiliza **JWT (JSON Web Tokens)** para autenticação. Para acessar os endpoints protegidos:
+
+1. **Fazer login** via `/login`
+2. **Copiar o token** retornado
+3. **Incluir o token** no header `Authorization: Bearer {token}` das requisições protegidas
+
 ## 📡 Endpoints da API
+
+### 🔑 AUTENTICAÇÃO
+
+#### Login (Sem autenticação)
+```http
+POST /login
+Content-Type: application/json
+
+{
+  "login": "seu_login",
+  "senha": "sua_senha"
+}
+```
+
+**Resposta:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
 
 ### 🩺 MÉDICOS
 
@@ -336,6 +413,75 @@ DELETE /pacientes/{id}
 
 ⚠️ **Nota:** A exclusão de pacientes é física - o registro é removido do banco de dados.
 
+---
+
+### 📅 CONSULTAS (Requer autenticação)
+
+#### Agendar Consulta
+
+<details>
+<summary><strong>Ver exemplo de requisição</strong></summary>
+
+```http
+POST /consultas
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "idMedico": null,
+  "idPaciente": 1,
+  "especialidade": "CARDIOLOGIA",
+  "data": "2026-05-20T14:00:00"
+}
+```
+
+**Ou com médico específico:**
+
+```http
+POST /consultas
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "idMedico": 1,
+  "idPaciente": 1,
+  "data": "2026-05-20T14:00:00"
+}
+```
+
+**Resposta (sucesso):**
+```json
+{
+  "id": 1,
+  "medico": {
+    "id": 1,
+    "nome": "Dr. João Silva",
+    "email": "joao@example.com",
+    "crm": "123456",
+    "especialidade": "CARDIOLOGIA"
+  },
+  "paciente": {
+    "id": 1,
+    "nome": "Maria Silva",
+    "email": "maria@example.com",
+    "cpf": "12345678901"
+  },
+  "data": "2026-05-20T14:00:00"
+}
+```
+
+**Possíveis erros:**
+- Médico ou paciente não existe
+- Paciente inativo
+- Médico inativo
+- Data no passado
+- Consulta fora do horário de funcionamento (8h-18h)
+- Médico com outra consulta no mesmo horário
+- Paciente com outra consulta no mesmo dia
+- Agendamento com menos de 30 minutos de antecedência
+
+</details>
+
 ## 📁 Estrutura do Projeto
 
 ```
@@ -346,24 +492,59 @@ api/
 │   │   │   ├── ApiApplication.java
 │   │   │   ├── Controller/
 │   │   │   │   ├── MedicoController.java
-│   │   │   │   └── PacienteController.java
-│   │   │   ├── Medico/
-│   │   │   │   ├── Medico.java
-│   │   │   │   ├── MedicoRepository.java
-│   │   │   │   ├── DadosCadastroMedico.java
-│   │   │   │   ├── DadosListarMedico.java
-│   │   │   │   ├── DadosAtualizaMedico.java
-│   │   │   │   ├── Especialidade.java
-│   │   │   │   └── DadosEndereco.java
-│   │   │   ├── Paciente/
-│   │   │   │   ├── Paciente.java
-│   │   │   │   ├── PacienteRepository.java
-│   │   │   │   ├── DadosCadastroPaciente.java
-│   │   │   │   ├── DadosListarPaciente.java
-│   │   │   │   └── DadosAtualizaPaciente.java
-│   │   │   └── Endereco/
-│   │   │       ├── Endereco.java
-│   │   │       └── DadosEndereco.java
+│   │   │   │   ├── PacienteController.java
+│   │   │   │   ├── ConsultaController.java
+│   │   │   │   └── AutenticacaoController.java
+│   │   │   ├── domain/
+│   │   │   │   ├── Medico/
+│   │   │   │   │   ├── Medico.java
+│   │   │   │   │   ├── MedicoRepository.java
+│   │   │   │   │   ├── Especialidade.java
+│   │   │   │   │   ├── DadosCadastroMedico.java
+│   │   │   │   │   ├── DadosListarMedico.java
+│   │   │   │   │   ├── DadosDetalhamentoMedico.java
+│   │   │   │   │   ├── DadosAtualizaMedico.java
+│   │   │   │   │   └── DadosEndereco.java
+│   │   │   │   ├── Paciente/
+│   │   │   │   │   ├── Paciente.java
+│   │   │   │   │   ├── PacienteRepository.java
+│   │   │   │   │   ├── DadosCadastroPaciente.java
+│   │   │   │   │   ├── DadosListarPaciente.java
+│   │   │   │   │   ├── DadosDetalhamentoPaciente.java
+│   │   │   │   │   └── DadosAtualizaPaciente.java
+│   │   │   │   ├── Consulta/
+│   │   │   │   │   ├── Consulta.java
+│   │   │   │   │   ├── ConsultaRepository.java
+│   │   │   │   │   ├── AgendaDeConsultas.java
+│   │   │   │   │   ├── DadosAgendamentosConsulta.java
+│   │   │   │   │   ├── DadosDetalhamentoConsulta.java
+│   │   │   │   │   └── Validacoes/
+│   │   │   │   │       ├── ValidadorAgendamentoDeConsulta.java
+│   │   │   │   │       ├── ValidadorMedicoAtivo.java
+│   │   │   │   │       ├── ValidadorPacienteAtivo.java
+│   │   │   │   │       ├── ValidadorMedicoComOutraConsultaNoMesmoHorario.java
+│   │   │   │   │       ├── ValidadorSemOutraConsultaNoDia.java
+│   │   │   │   │       ├── ValidadorHorarioFuncionamentoClinica.java
+│   │   │   │   │       └── ValidadorHorarioAntecedencia.java
+│   │   │   │   ├── Usuario/
+│   │   │   │   │   ├── Usuario.java
+│   │   │   │   │   ├── UsuarioRepository.java
+│   │   │   │   │   ├── DadosAutenticacao.java
+│   │   │   │   │   └── AutenticacaoService.java
+│   │   │   │   ├── Endereco/
+│   │   │   │   │   ├── Endereco.java
+│   │   │   │   │   └── DadosEndereco.java
+│   │   │   │   └── ValidacaoException.java
+│   │   │   └── infra/
+│   │   │       ├── security/
+│   │   │       │   ├── SecurityConfigurations.java
+│   │   │       │   ├── SecurityFilter.java
+│   │   │       │   ├── TokenService.java
+│   │   │       │   └── DadosTokenJWT.java
+│   │   │       ├── exception/
+│   │   │       │   └── TratadorDeErros.java
+│   │   │       └── springdoc/
+│   │   │           └── SpringDocConfiguration.java
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── application.properties.example
@@ -371,10 +552,16 @@ api/
 │   │           ├── V1__create-table-medico.sql
 │   │           ├── V2__alter-table-medicos-add-column-telefone.sql
 │   │           ├── V3__create-table-pacientes.sql
-│   │           └── V4__alter-table-medicos-add-ativo.sql
+│   │           ├── V4__alter-table-medicos-add-ativo.sql
+│   │           ├── V5__create-table-usuario.sql
+│   │           └── V6__create-table-consultas.sql
 │   └── test/
 │       └── java/med/voll/api/
-│           └── ApiApplicationTests.java
+│           ├── Controller/
+│           │   └── ConsultaControllerTest.java
+│           └── domain/
+│               └── Medico/
+│                   └── MedicoRepositoryTest.java
 └── pom.xml
 ```
 
@@ -386,6 +573,8 @@ O projeto utiliza Flyway para controle de versão do banco de dados. As migratio
 - **V2**: Adição da coluna telefone em médicos
 - **V3**: Criação da tabela de pacientes
 - **V4**: Adição do campo `ativo` em médicos (para exclusão lógica)
+- **V5**: Criação da tabela de usuários (para autenticação)
+- **V6**: Criação da tabela de consultas com relacionamentos
 
 ## 🛠️ Desenvolvimento
 
@@ -396,14 +585,20 @@ O projeto utiliza Flyway para controle de versão do banco de dados. As migratio
 - **Lombok** para redução de código boilerplate
 - **Desativação Lógica** para médicos (soft delete)
 - **Exclusão Física** para pacientes
+- **Strategy Pattern** para validações de agendamento
+- **Spring Security** com JWT para autenticação
+- **ServiceLayer** com `AgendaDeConsultas`
 
 ### Boas Práticas Implementadas
-- Separação de responsabilidades (Controllers, Services, Repositories)
+- Separação de responsabilidades (Controllers, Services, Repositories, Validators)
 - DTOs para comunicação com a API
 - Validação em camadas com annotations
 - Transações gerenciadas pelo Spring
 - Paginação para melhor performance
-- Tratamento de dados sensíveis
+- Tratamento de erros centralizado
+- Segurança em endpoints protegidos
+- Documentação automática com Swagger
+- Testes unitários para repositórios e controllers
 
 ## 🔐 Diferenças de Exclusão
 
@@ -418,9 +613,40 @@ O projeto utiliza Flyway para controle de versão do banco de dados. As migratio
 - A operação é irreversível
 - Use com cautela em ambiente de produção
 
+## 🔐 Segurança e Autenticação
+
+### JWT (JSON Web Tokens)
+- Tokens com validade de 2 horas
+- Geração via biblioteca Auth0
+- Verificação em endpoints protegidos
+- Payload contém ID do usuário e login
+
+### Spring Security
+- Filtros de segurança customizados
+- Proteção CSRF desabilitada (API stateless)
+- Apenas endpoints de autenticação sem proteção
+- Todos os endpoints de negócio protegidos com `@SecurityRequirement`
+
 ## 📚 Exemplos de Uso com cURL
 
-### Cadastrar Médico
+### 1. Fazer Login
+```bash
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "login": "seu_login",
+    "senha": "sua_senha"
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### 2. Cadastrar Médico (Sem autenticação obrigatória neste exemplo)
 ```bash
 curl -X POST http://localhost:8080/medicos \
   -H "Content-Type: application/json" \
@@ -441,47 +667,105 @@ curl -X POST http://localhost:8080/medicos \
   }'
 ```
 
-### Listar Médicos
+### 3. Agendar Consulta (Com autenticação)
 ```bash
-curl http://localhost:8080/medicos?pagina=0&tamanho=10
-```
-
-### Deletar Médico
-```bash
-curl -X DELETE http://localhost:8080/medicos/1
-```
-
-### Cadastrar Paciente
-```bash
-curl -X POST http://localhost:8080/pacientes \
+curl -X POST http://localhost:8080/consultas \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN_JWT" \
   -d '{
-    "nome": "Maria Silva",
-    "email": "maria@example.com",
-    "telefone": "11987654321",
-    "cpf": "12345678901",
-    "endereco": {
-      "logradouro": "Rua das Flores",
-      "numero": "200",
-      "bairro": "Centro",
-      "cep": "12345-678",
-      "cidade": "São Paulo",
-      "uf": "SP"
-    }
+    "idMedico": 1,
+    "idPaciente": 1,
+    "data": "2026-05-20T14:00:00"
   }'
 ```
 
-### Listar Pacientes
+Ou deixando a API escolher o médico:
 ```bash
-curl http://localhost:8080/pacientes?pagina=0&tamanho=10
+curl -X POST http://localhost:8080/consultas \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer SEU_TOKEN_JWT" \
+  -d '{
+    "idPaciente": 1,
+    "especialidade": "CARDIOLOGIA",
+    "data": "2026-05-20T14:00:00"
+  }'
 ```
 
-### Deletar Paciente
+### 4. Listar Médicos
 ```bash
-curl -X DELETE http://localhost:8080/pacientes/1
+curl "http://localhost:8080/medicos?pagina=0&tamanho=10"
 ```
 
-## 📝 Licença
+### 5. Listar Pacientes
+```bash
+curl "http://localhost:8080/pacientes?pagina=0&tamanho=10"
+```
+
+## 📖 Documentação Interativa
+
+Acesse a documentação Swagger em seu navegador:
+```
+http://localhost:8080/swagger-ui.html
+```
+
+A documentação fornece:
+- Lista completa de endpoints
+- Modelos de requisição e resposta
+- Testes diretos dos endpoints
+- Parâmetros obrigatórios e opcionais
+
+## 🚀 Deploy
+
+### Buildando a Aplicação
+```bash
+./mvnw clean package -DskipTests
+```
+
+### JAR Executável
+```bash
+java -jar target/api-0.0.1-SNAPSHOT.jar
+```
+
+## 🐛 Tratamento de Erros
+
+A API possui tratamento centralizado de erros com as seguintes respostas:
+
+### Validação
+```json
+{
+  "campo": "email",
+  "mensagem": "deve ser um endereço de e-mail bem formado"
+}
+```
+
+### Erro de Negócio
+```json
+{
+  "mensagem": "Médico não disponível nesta data"
+}
+```
+
+### Erro de Autenticação
+```json
+{
+  "mensagem": "Token JWT inválido ou expirado!"
+}
+```
+
+## 🧪 Testes
+
+O projeto inclui testes para:
+- Repositórios de dados
+- Controllers de consultas
+- Validações de agendamento
+
+Execute os testes com:
+```bash
+./mvnw test
+```
+- Tratamento de dados sensíveis
+
+##  Licença
 
 Este projeto está sob a licença especificada no arquivo [LICENSE](LICENSE).
 
